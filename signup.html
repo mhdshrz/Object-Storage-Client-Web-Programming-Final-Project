@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sing Up!</title>
+  </head>
+  <body>
+    <main>
+      <div class="losign__container">
+        <section class="intro">
+          <div class="logo">
+            <a href="/">
+              <img src="/Vector Logo.png" alt="website logo picture" />
+              <span>Storage</span>
+            </a>
+          </div>
+          <div class="desc">
+            <h1>Manage Your Files the Best Way</h1>
+            <p>
+              Awesome, we've created the perfecte place for you to store all
+              your documents.
+            </p>
+          </div>
+          <div class="desc-img"><img src="/intro-image.png" alt="" /></div>
+        </section>
+        <section class="board">
+          <h2>Create Account</h2>
+          <form class="signup__form" action="" novalidate>
+            <div class="username__row form__row">
+              <label for="username">Username</label>
+              <input
+                class="field"
+                placeholder="Enter your username"
+                type="text"
+                name="username"
+                id="username"
+              />
+              <span class="error"></span>
+            </div>
+            <div class="email__row form__row">
+              <label for="email">Email</label>
+              <input
+                class="field"
+                placeholder="Enter your email"
+                type="email"
+                name="email"
+                id="email"
+              />
+              <span class="error"></span>
+            </div>
+            <div class="password__row form__row">
+              <label for="password">Password</label>
+              <input
+                class="field password"
+                placeholder="Enter your password"
+                type="password"
+                name="password"
+                id="password"
+              />
+              <i class="ri-eye-line dnone password__icon"></i>
+              <span class="error"> </span>
+            </div>
+            <div class="confirm__row form__row">
+              <label for="confirm-password">Confirm Password</label>
+              <input
+                class="field password"
+                placeholder="confirm your password"
+                type="password"
+                name="confirm-password"
+                id="confirm-password"
+              />
+              <i class="ri-eye-line dnone password__icon"></i>
+              <span class="error"></span>
+            </div>
+            <button class="btn__primary" type="submit">Create Account</button>
+          </form>
+          <p>Already have an account? <a href="#login">Login</a></p>
+        </section>
+        <section class="emailcheck" style="display: none">
+          <h2>Check Your Email</h2>
+          <img src="/check-email.png" alt="paper rocket carrying a mail" />
+          <p>We've sent an email to {email address} to verify your account</p>
+          <button type="button" class="btn__primary">Login</button>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="/js/signup.js"></script>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+:root {
+  --primary-color: #7288fa;
+  --error-color: #ff7474;
+}
+
+.field {
+  border: none;
+  outline: none;
+  box-shadow: 0 5px 10px #dddddd;
+  width: 100%;
+  padding-block: 2rem 1rem;
+  padding-inline: 1rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+}
+
+.field__error {
+  border: 1px solid var(--error-color);
+}
+
+.btn__primary {
+  border: none;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 26px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1rem;
+  box-shadow: 0 5px 10px #b4c0fc;
+}
+
+.btn__primary:hover {
+  cursor: pointer;
+}
+
+main {
+  height: 100vh;
+}
+
+.losign__container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 40% 60%;
+}
+
+.intro {
+  background-color: var(--primary-color);
+  display: grid;
+  padding: 3rem 6rem;
+  color: white;
+  justify-items: center;
+  align-items: center;
+}
+
+.intro .logo {
+  justify-self: start;
+}
+
+.intro .logo a {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-items: center;
+  column-gap: 10px;
+  font-size: 1.5rem;
+  font-weight: medium;
+}
+
+.losign__container h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.intro .desc p {
+  font-size: 1rem;
+  font-weight: regular;
+}
+
+.logo img {
+  width: 70px;
+}
+
+.desc-img img {
+  width: 200px;
+}
+
+/* board */
+.board {
+  background-color: white;
+  padding: 3rem 10rem;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.board form {
+  width: 100%;
+  display: grid;
+}
+
+.signup__form {
+  row-gap: 20px;
+}
+
+.login__form {
+  row-gap: 35px;
+}
+
+.losign__container h2 {
+  font-size: 2.5rem;
+}
+
+.board h2 {
+  justify-self: start;
+}
+
+.form__row {
+  position: relative;
+}
+
+.form__row label {
+  font-size: 0.875rem;
+  position: absolute;
+  top: 11px;
+  left: 1rem;
+}
+
+.password {
+  padding-inline: 1rem 3rem;
+}
+
+.board a {
+  color: var(--primary-color);
+}
+
+.form__row i {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.7rem;
+}
+
+.form__row i:hover {
+  cursor: pointer;
+}
+
+.dnone {
+  display: none;
+}
+
+.error {
+  color: var(--error-color);
+  font-size: 0.6rem;
+  position: absolute;
+  left: 1rem;
+  top: 72px;
+}
+
+.board p,
+.emailcheck p {
+  font-size: 0.8rem;
+}
+
+/* email check prompt */
+.emailcheck {
+  background-color: white;
+  display: grid;
+  padding: 3rem 10rem;
+  /* color: white; */
+  align-content: center;
+  row-gap: 2rem;
+  justify-items: center;
+  /* align-items: center; */
+}
