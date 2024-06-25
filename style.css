@@ -1,17 +1,34 @@
 :root {
   --primary-color: #7288fa;
+  --text-color: #333f4e;
+  --text-color-light: #a3b2c7;
   --error-color: #ff7474;
 }
 
 .field {
+  width: 100%;
   border: none;
   outline: none;
   box-shadow: 0 5px 10px #dddddd;
-  width: 100%;
+  padding: 1rem;
+  color: inherit;
+}
+
+.field::placeholder,
+.field::-ms-input-placeholder {
+  color: var(--text-color-light);
+}
+
+.field__losign {
   padding-block: 2rem 1rem;
-  padding-inline: 1rem;
   border-radius: 10px;
   font-size: 0.875rem;
+}
+
+.field__search {
+  border-radius: 26px;
+  font-size: 0.75rem;
+  padding-left: 2.5rem;
 }
 
 .field__error {
@@ -21,16 +38,28 @@
 .btn__primary {
   border: none;
   width: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
   padding: 1rem;
   border-radius: 26px;
   background-color: var(--primary-color);
   color: white;
-  font-size: 1rem;
   box-shadow: 0 5px 10px #b4c0fc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn__primary img {
+  margin-right: 4px;
 }
 
 .btn__primary:hover {
   cursor: pointer;
+}
+
+body {
+  color: var(--text-color);
 }
 
 main {
@@ -75,7 +104,7 @@ main {
   font-weight: regular;
 }
 
-.logo img {
+.intro .logo img {
   width: 70px;
 }
 
@@ -105,11 +134,8 @@ main {
   row-gap: 35px;
 }
 
-.losign__container h2 {
-  font-size: 2.5rem;
-}
-
 .board h2 {
+  font-size: 2.5rem;
   justify-self: start;
 }
 
@@ -169,4 +195,57 @@ main {
   row-gap: 2rem;
   justify-items: center;
   /* align-items: center; */
+}
+
+/* ---------- index.html ---------- */
+/* primary container */
+.container__primary {
+  padding: 1rem 2rem;
+}
+
+/* header */
+header ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header .logo a {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-items: center;
+  column-gap: 10px;
+}
+
+.search__bar {
+  position: relative;
+  width: 32rem;
+  margin-inline: 7rem;
+}
+
+.search__bar img {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+}
+
+.search__bar input {
+  line-height: 21px;
+}
+
+.user__profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user__profile img {
+  width: 53px;
+  border-radius: 50%;
+  margin-right: 1rem;
 }

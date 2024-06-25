@@ -4,11 +4,67 @@
     <meta charset="UTF-8" />
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Storage</title>
   </head>
   <body>
-    <h1>hello</h1>
+    <div class="container__primary">
+      <header>
+        <ul>
+          <li>
+            <div class="logo">
+              <a href="/">
+                <img src="/logo-blue.svg" alt="website logo picture" />
+                <span>Storage</span>
+              </a>
+            </div>
+          </li>
+          <li>
+            <div class="search__bar">
+              <input
+                class="field field__search"
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search ..."
+              />
+              <img src="/icons/search-dark.svg" alt="" />
+            </div>
+          </li>
+          <li>
+            <button type="button" class="btn__primary">
+              <img
+                src="/icons/upload-light.png"
+                alt="Upload icon (a cloud in which is an upward arrow)"
+              />
+              Upload
+            </button>
+          </li>
+          <li>
+            <div class="user__profile">
+              <img src="/users/dummy-avatar.png" alt="Your avatar picture" />
+              <span>Mitchel</span>
+            </div>
+          </li>
+        </ul>
+      </header>
+      <main>
+        <div class="objects__container">
+          <h1>Objects</h1>
+          <h2>Total {volume consumed}</h2>
+          <div class="objects">
+            <div class="object">
+              <div class="img__container">
+                <img src="logos/figma-logo.png" alt="" />
+              </div>
+            </div>
+            <h3>App School.fig</h3>
+            <p>10 GB - 10:09 PM, 10 Oct</p>
+          </div>
+        </div>
+      </main>
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
