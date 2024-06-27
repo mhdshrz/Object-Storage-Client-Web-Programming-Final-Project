@@ -1,6 +1,11 @@
 const eyeCons = document.querySelectorAll(".password__icon");
-const passwords = document.querySelectorAll(".password");
+const signupForm = document.getElementsByTagName("form")[0];
+const username = signupForm.elements["username"];
+const email = signupForm.elements["email"];
+const password = signupForm.elements["password"];
+const confirmPassword = signupForm.elements["confirm-password"];
 
+const passwords = document.querySelectorAll(".password");
 // clicking on the eye icon
 eyeCons.forEach((eyeCon, index) => {
   eyeCon.addEventListener("click", () => {
@@ -26,42 +31,29 @@ passwords.forEach((password, index) => {
   });
 });
 
-const signupForm = document.getElementsByTagName("form")[0];
-
 // focusing on fields removes the errors
-signupForm.elements["username"].addEventListener("focus", (e) => {
+username.addEventListener("focus", (e) => {
   e.target.classList.remove("field__error");
   document.querySelectorAll(".error")[0].textContent = "";
 });
-signupForm.elements["email"].addEventListener("focus", (e) => {
+email.addEventListener("focus", (e) => {
   e.target.classList.remove("field__error");
   document.querySelectorAll(".error")[1].textContent = "";
 });
-signupForm.elements["password"].addEventListener("focus", (e) => {
+password.addEventListener("focus", (e) => {
   e.target.classList.remove("field__error");
   document.querySelectorAll(".error")[2].textContent = "";
 });
-signupForm.elements["confirm-password"].addEventListener("focus", (e) => {
+confirmPassword.addEventListener("focus", (e) => {
   e.target.classList.remove("field__error");
   document.querySelectorAll(".error")[3].textContent = "";
 });
 
 // form validation and submission
 signupForm.addEventListener("submit", (e) => {
-  // function to delete an extra entry from formData obj
-  function deleteFormDataEntry(formData, entry) {
-    const newFormData = new FormData();
-    for (let [key, value] of formData.entries()) {
-      if (key !== entry) {
-        newFormData.append(key, value);
-      }
-    }
-    return newFormData;
-  }
-
   // username validation
   function usernameValid(username) {
-    const regEx = /^\w+$/;
+    const regEx = /^[a-zA-Z]{4,}$/;
     return regEx.test(username);
   }
   // email validation
@@ -74,15 +66,11 @@ signupForm.addEventListener("submit", (e) => {
 
   let formValid = true;
 
-  const username = signupForm.elements["username"];
-  const email = signupForm.elements["email"];
-  const password = signupForm.elements["password"];
-  const confirmPassword = signupForm.elements["confirm-password"];
   const errors = document.querySelectorAll(".error");
 
   if (!usernameValid(username.value)) {
     errors[0].textContent =
-      "Must be at least 4 characters and contain only letters or numbers or '_'";
+      "Must be at least 4 characters and contain only letters";
     username.classList.add("field__error");
     formValid = false;
   } else {
@@ -131,12 +119,65 @@ signupForm.addEventListener("submit", (e) => {
 
   if (formValid) {
     username.value = username.value.toLowerCase();
-    const allFormData = new FormData(signupForm);
-    const formData = deleteFormDataEntry(allFormData, "confirm-password");
-    for (let data of formData) console.log(`'${data[0]}': '${data[1]}'`);
-    console.log(formValid);
+    console.log(
+      formValid,
+      JSON.stringify({
+        username: username.value,
+        email: email.value,
+        password: password.value,
+      })
+    );
 
-    document.querySelector(".board").style.display = "none";
-    document.querySelector(".emailcheck").style.display = "grid";
+    fetch("http://localhost:8000/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username.value,
+        email: email.value,
+        password: password.value,
+      }),
+    })
+      .then((response) => {
+        document.querySelector(
+          ".emailcheck"
+        ).children[2].innerHTML = `We've sent an email to <span class='bold'>${email.value}</span> to verify your accont.`;
+        document.querySelector(".board").style.display = "none";
+        document.querySelector(".emailcheck").style.display = "grid";
+        return response.json();
+      })
+      .then((result) =>
+        console.log(
+          "account created, waiting for email to be confirmed",
+          result
+        )
+      )
+      .catch((error) => console.error("error", error));
   }
 });
+
+// login button in the prompt for email verification
+document
+  .querySelector(".emailcheck")
+  .children[3].addEventListener("click", (e) => {
+    fetch("http://localhost:8000/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          localStorage.setItem("username", username.value);
+          window.history.replaceState(null, null, "http://localhost:5173/");
+          window.location.href = "http://localhost:5173/";
+        } else if (response.status === 401)
+          console.log("unauthorized bitch!", response.status);
+      })
+      .catch((error) => console.error("error", error));
+  });

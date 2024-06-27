@@ -71,6 +71,10 @@ body {
   margin-top: 2rem;
 }
 
+.bold {
+  font-weight: 600;
+}
+
 .losign__container {
   height: 100%;
   display: grid;
@@ -209,6 +213,10 @@ body {
 }
 
 /* header */
+header {
+  padding-inline: 2rem;
+}
+
 header ul {
   display: flex;
   justify-content: space-between;

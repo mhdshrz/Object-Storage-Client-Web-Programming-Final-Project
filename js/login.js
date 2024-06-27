@@ -1,5 +1,7 @@
 const eyeCon = document.querySelector(".password__icon");
-const password = document.querySelector(".password");
+const loginForm = document.getElementsByTagName("form")[0];
+const usernameOrEmail = loginForm.elements["usernameOrEmail"];
+const password = loginForm.elements["password"];
 
 // clicking on the eye icon
 eyeCon.addEventListener("click", () => {
@@ -22,23 +24,21 @@ password.addEventListener("input", () => {
   }
 });
 
-const loginForm = document.getElementsByTagName("form")[0];
-
 // focusing on fields removes the errors
-loginForm.elements["usernameOrEmail"].addEventListener("focus", (e) => {
+usernameOrEmail.addEventListener("focus", (e) => {
   e.target.classList.remove("field__error");
   document.querySelectorAll(".error")[0].textContent = "";
 });
-loginForm.elements["password"].addEventListener("focus", (e) => {
+password.addEventListener("focus", (e) => {
   e.target.classList.remove("field__error");
   document.querySelectorAll(".error")[1].textContent = "";
 });
 
 // form validation and submission
 loginForm.addEventListener("submit", (e) => {
-  // username validation
+  // usernameOrEmail validation
   function usernameOrEmailValid(usernameOrEmail) {
-    const usernamePattern = /^[A-Za-z0-9_]{4,}$/;
+    const usernamePattern = /^[A-Za-z]{4,}$/;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return (
       usernamePattern.test(usernameOrEmail) ||
@@ -50,13 +50,11 @@ loginForm.addEventListener("submit", (e) => {
 
   let formValid = true;
 
-  const usernameOrEmail = loginForm.elements["usernameOrEmail"];
-  const password = loginForm.elements["password"];
   const errors = document.querySelectorAll(".error");
 
   if (!usernameOrEmailValid(usernameOrEmail.value)) {
     errors[0].textContent =
-      "Username must be at least 4 characters and contain only letters or numbers or '_' and email must be a vaild email address";
+      "Username must be at least 4 characters and contain only letters, email must be a vaild email address";
     usernameOrEmail.classList.add("field__error");
     formValid = false;
   } else {
@@ -88,8 +86,30 @@ loginForm.addEventListener("submit", (e) => {
 
   if (formValid) {
     usernameOrEmail.value = usernameOrEmail.value.toLowerCase();
-    const formData = new FormData(loginForm);
-    for (let data of formData) console.log(`${data[0]}: ${data[1]}`);
-    console.log(formValid);
+    console.log(
+      formValid,
+      JSON.stringify({
+        usernameOrEmail: usernameOrEmail.value,
+        password: password.value,
+      })
+    );
+
+    fetch("http://localhost:8000/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: usernameOrEmail.value,
+        password: password.value,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("success", result);
+        window.history.replaceState(null, null, "http://localhost:5173/");
+        window.location.href = "http://localhost:5173/";
+      })
+      .catch((error) => console.error("error", error));
   }
 });
