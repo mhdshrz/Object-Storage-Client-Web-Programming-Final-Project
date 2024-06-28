@@ -2,7 +2,28 @@ const username = localStorage.getItem("username");
 console.log(username);
 
 function showPopupMenu(e) {
+  // making the options menu popup
   function makePopupMenu() {
+    // options callback functions for share, download and delete
+    function deleteObject(e) {
+      console.log("delete", e.currentTarget);
+      // e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.remove();
+    }
+    function shareObject(e) {
+      console.log("share", e.currentTarget);
+      e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.remove();
+      const overlay = document.querySelector(".overlay");
+      const form = document.querySelector(".addpeople");
+      overlay.classList.add("active");
+      setTimeout(() => {
+        form.classList.add("active");
+      }, 0);
+    }
+    function downloadObject(e) {
+      console.log("download", e.currentTarget);
+    }
+
+    // creating the options menu
     const optionsMenu = document.createElement("div");
     optionsMenu.classList.add("options__menu");
 
@@ -17,6 +38,14 @@ function showPopupMenu(e) {
     ["Share", "Download", "Delete"].forEach((optionText) => {
       const li = document.createElement("li");
 
+      const button = document.createElement("button");
+      button.classList.add("option__button");
+      if (optionText === "Share") button.addEventListener("click", shareObject);
+      else if (optionText === "Download")
+        button.addEventListener("click", downloadObject);
+      else if (optionText === "Delete")
+        button.addEventListener("click", deleteObject);
+
       const optionIcon = document.createElement("div");
       optionIcon.classList.add("option__icon", optionText.toLowerCase());
 
@@ -25,31 +54,41 @@ function showPopupMenu(e) {
       img.setAttribute("alt", `${optionText.toLowerCase()} icon`);
 
       optionIcon.appendChild(img);
-
-      li.appendChild(optionIcon);
-      li.appendChild(document.createTextNode(optionText));
-
+      button.appendChild(optionIcon);
+      button.appendChild(document.createTextNode(optionText));
+      li.appendChild(button);
       ul.appendChild(li);
     });
 
     optionsDiv.appendChild(ul);
-
     optionsMenu.appendChild(heading);
     optionsMenu.appendChild(optionsDiv);
+    optionsMenu.addEventListener("contextmenu", (e) => e.stopPropagation());
 
     return optionsMenu;
   }
 
   e.stopPropagation();
+  e.preventDefault();
+
   if (document.querySelector(".options__menu"))
     document.querySelector(".options__menu").remove();
-  const button = e.currentTarget;
-  const coordinates = button.getBoundingClientRect();
+
+  let coordinates, object;
+  if (e.currentTarget.nodeName === "BUTTON") {
+    const button = e.currentTarget;
+    object = button.parentNode;
+    coordinates = button.getBoundingClientRect();
+  } else if (e.currentTarget.nodeName === "DIV") {
+    object = e.currentTarget;
+    coordinates = object
+      .getElementsByTagName("button")[0]
+      .getBoundingClientRect();
+  }
   const optionsMenu = makePopupMenu();
   optionsMenu.style.left = `${Math.round(coordinates.left - 243)}px`;
   optionsMenu.style.top = `${Math.round(coordinates.bottom)}px`;
-
-  e.currentTarget.parentNode.appendChild(optionsMenu);
+  object.appendChild(optionsMenu);
 }
 
 function hidePopupMenu(e) {
@@ -63,5 +102,40 @@ function hidePopupMenu(e) {
 
 document.querySelectorAll(".object").forEach((object) => {
   object.children[2].addEventListener("click", showPopupMenu);
+  object.addEventListener("contextmenu", showPopupMenu);
 });
 document.addEventListener("click", hidePopupMenu);
+document.addEventListener("contextmenu", hidePopupMenu);
+document.querySelector(".objects").addEventListener("scroll", () => {
+  if (document.querySelector(".options__menu")) {
+    document.querySelector(".options__menu").remove();
+  }
+});
+
+document.querySelectorAll(".person").forEach((person) => {
+  person.addEventListener("click", (e) => {
+    e.stopPropagation();
+    let checkbox = person.getElementsByTagName("input")[0];
+    checkbox.checked = !checkbox.checked;
+    console.log("south");
+  });
+  let checkbox = person.getElementsByTagName("input")[0];
+  checkbox.addEventListener("click", (e) => {
+    e.stopPropagation();
+    console.log(e.target);
+  });
+});
+
+const overlayGoBack = document
+  .querySelector(".addpeople")
+  .getElementsByTagName("button")[0];
+overlayGoBack.addEventListener("click", (e) => {
+  console.log("pipi");
+  e.stopPropagation();
+  const overlay = document.querySelector(".overlay");
+  const form = document.querySelector(".addpeople");
+  form.classList.remove("active");
+  setTimeout(() => {
+    overlay.classList.remove("active");
+  }, 500);
+});
