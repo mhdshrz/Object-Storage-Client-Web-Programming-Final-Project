@@ -2,6 +2,8 @@ import { objects } from "../public/resources/objects";
 
 const domain = localStorage.getItem("domain");
 
+showObjects(0, 20);
+
 document.querySelectorAll(".object").forEach((object) => {
   object.children[2].addEventListener("click", showPopupMenu);
   object.addEventListener("contextmenu", showPopupMenu);
@@ -67,33 +69,29 @@ fileUpload.addEventListener("change", (e) => {
   }
 });
 
-objects.forEach((object) => {
-  function getImgPathAlt(type) {
-    switch (type) {
-      case "png":
-      case "jpg":
-      case "jpeg":
-        return ["/logos/png-jpg-jpeg-logo.svg", "picture icon"];
-      case "mp3":
-        return ["/logos/mp3-logo.svg", "music icon"];
-      case "mp4":
-        return ["/logos/mp4-logo.svg", "play video icon"];
-      case "pdf":
-        return ["/logos/pdf-logo.svg", "pdf file icon"];
-      default:
-        return ["/logos/fallback-logo.svg", "unknown file icon"];
-    }
+const lastPageNumber = Math.ceil(objects.length / 20);
+document.getElementById("previous").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const pageNumber = document.getElementById("page-no");
+  if (Number(pageNumber.textContent) > 1) {
+    pageNumber.textContent = `${Number(pageNumber.textContent) - 1}`;
+    showObjects(
+      Number(pageNumber.textContent) * 20 - 20,
+      Number(pageNumber.textContent) * 20
+    );
   }
-  const imgPathAlt = getImgPathAlt(object.type);
-  const objectElement = makeObject(
-    imgPathAlt[0],
-    imgPathAlt[1],
-    object.name,
-    `${object.size} - ${object.date}`
-  );
-  objectElement.children[2].addEventListener("click", showPopupMenu);
-  objectElement.addEventListener("contextmenu", showPopupMenu);
-  document.querySelector(".objects").appendChild(objectElement);
+});
+
+document.getElementById("next").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const pageNumber = document.getElementById("page-no");
+  if (Number(pageNumber.textContent) < lastPageNumber) {
+    pageNumber.textContent = `${Number(pageNumber.textContent) + 1}`;
+    showObjects(
+      Number(pageNumber.textContent) * 20 - 20,
+      Number(pageNumber.textContent) * 20
+    );
+  }
 });
 
 function showPopupMenu(e) {
@@ -276,6 +274,39 @@ function makeUser(imgPath, name, email) {
   person.appendChild(personInfo);
 
   return person;
+}
+
+function showObjects(start, end) {
+  if (document.querySelectorAll(".object"))
+    document.querySelectorAll(".object").forEach((obj) => obj.remove());
+  objects.slice(start, end).forEach((object) => {
+    function getImgPathAlt(type) {
+      switch (type) {
+        case "png":
+        case "jpg":
+        case "jpeg":
+          return ["/logos/png-jpg-jpeg-logo.svg", "picture icon"];
+        case "mp3":
+          return ["/logos/mp3-logo.svg", "music icon"];
+        case "mp4":
+          return ["/logos/mp4-logo.svg", "play video icon"];
+        case "pdf":
+          return ["/logos/pdf-logo.svg", "pdf file icon"];
+        default:
+          return ["/logos/fallback-logo.svg", "unknown file icon"];
+      }
+    }
+    const imgPathAlt = getImgPathAlt(object.type);
+    const objectElement = makeObject(
+      imgPathAlt[0],
+      imgPathAlt[1],
+      object.name,
+      `${object.size} - ${object.date}`
+    );
+    objectElement.children[2].addEventListener("click", showPopupMenu);
+    objectElement.addEventListener("contextmenu", showPopupMenu);
+    document.querySelector(".objects").appendChild(objectElement);
+  });
 }
 
 console.log(objects);
