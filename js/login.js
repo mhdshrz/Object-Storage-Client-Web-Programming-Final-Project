@@ -1,3 +1,5 @@
+const domain = localStorage.getItem("domain");
+
 const eyeCon = document.querySelector(".password__icon");
 const loginForm = document.getElementsByTagName("form")[0];
 const usernameOrEmail = loginForm.elements["usernameOrEmail"];
@@ -94,7 +96,7 @@ loginForm.addEventListener("submit", (e) => {
       })
     );
 
-    fetch("http://localhost:8000/login/", {
+    fetch(`${domain}login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,11 +106,19 @@ loginForm.addEventListener("submit", (e) => {
         password: password.value,
       }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 200) {
+          window.history.replaceState(null, null, "http://localhost:5173/");
+          window.location.href = "http://localhost:5173/";
+        } else if (response.status === 404) {
+          alert("username or email not found");
+        } else if (response.status === 403) {
+          alert("email not verified");
+        }
+        return response.json();
+      })
       .then((result) => {
-        console.log("success", result);
-        window.history.replaceState(null, null, "http://localhost:5173/");
-        window.location.href = "http://localhost:5173/";
+        console.log("result", result);
       })
       .catch((error) => console.error("error", error));
   }

@@ -1,3 +1,5 @@
+const domain = localStorage.getItem("domain");
+
 const eyeCons = document.querySelectorAll(".password__icon");
 const signupForm = document.getElementsByTagName("form")[0];
 const username = signupForm.elements["username"];
@@ -128,7 +130,7 @@ signupForm.addEventListener("submit", (e) => {
       })
     );
 
-    fetch("http://localhost:8000/register/", {
+    fetch(`${domain}register/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -140,11 +142,19 @@ signupForm.addEventListener("submit", (e) => {
       }),
     })
       .then((response) => {
-        document.querySelector(
-          ".emailcheck"
-        ).children[2].innerHTML = `We've sent an email to <span class='bold'>${email.value}</span> to verify your accont.`;
-        document.querySelector(".board").style.display = "none";
-        document.querySelector(".emailcheck").style.display = "grid";
+        if (response.status === 201) {
+          document.querySelector(
+            ".emailcheck"
+          ).children[2].innerHTML = `We've sent an email to <span class='bold'>${email.value}</span> to verify your accont.`;
+          document.querySelector(".board").style.display = "none";
+          document.querySelector(".emailcheck").style.display = "grid";
+        }
+        // else if (response.status === 400) {
+
+        // }
+        else if (response.status === 409) {
+          alert("email or username already exists!");
+        }
         return response.json();
       })
       .then((result) =>
@@ -161,7 +171,7 @@ signupForm.addEventListener("submit", (e) => {
 document
   .querySelector(".emailcheck")
   .children[3].addEventListener("click", (e) => {
-    fetch("http://localhost:8000/login/", {
+    fetch(`${domain}login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -176,8 +186,9 @@ document
           localStorage.setItem("username", username.value);
           window.history.replaceState(null, null, "http://localhost:5173/");
           window.location.href = "http://localhost:5173/";
-        } else if (response.status === 401)
-          console.log("unauthorized bitch!", response.status);
+        } else if (response.status === 404)
+          alert("username or email not found");
+        else if (response.status === 403) alert("email not verified!");
       })
       .catch((error) => console.error("error", error));
   });

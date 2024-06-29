@@ -259,6 +259,10 @@ header .logo a {
   margin-right: 1rem;
 }
 
+.user__profile span {
+  width: 100px;
+}
+
 /* objects */
 .objects__container {
   border-radius: 40px;
@@ -322,6 +326,20 @@ header .logo a {
   font-weight: 400;
 }
 
+.obj__desc p,
+.obj__desc h3 {
+  width: 135px;
+  height: 22px;
+  overflow: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.obj__desc p::-webkit-scrollbar,
+.obj__desc h3::-webkit-scrollbar {
+  display: none;
+}
+
 .object button {
   border: none;
   background-color: inherit;
@@ -337,8 +355,8 @@ header .logo a {
   position: absolute;
   background-color: white;
   z-index: 100;
-  top: 285px;
-  left: 537px;
+  /* top: 285px;
+  left: 537px; */
   width: 240px;
   display: grid;
   row-gap: 0.5rem;

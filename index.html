@@ -33,13 +33,20 @@
             </div>
           </li>
           <li>
-            <button type="button" class="btn__primary">
+            <button type="button" id="upload-button" class="btn__primary">
               <img
                 src="/icons/upload-light.png"
                 alt="Upload icon (a cloud in which is an upward arrow)"
               />
               Upload
             </button>
+            <input
+              type="file"
+              name="file-upload"
+              id="file-upload"
+              style="display: none"
+              accept="*.*"
+            />
           </li>
           <li>
             <div class="user__profile">
@@ -65,39 +72,6 @@
               <button type="button">
                 <img src="/icons/options.svg" alt="three dot options icon" />
               </button>
-              <div class="options__menu">
-                <h4>App School.fig</h4>
-                <div class="options">
-                  <ul>
-                    <li>
-                      <div class="option__icon share">
-                        <img src="/icons/share.svg" alt="share icon" />
-                      </div>
-                      Share
-                    </li>
-                    <li>
-                      <div class="option__icon download">
-                        <img
-                          src="/icons/download.svg"
-                          alt="download icon (mail with a downward arrow inside it)"
-                        />
-                      </div>
-                      Download
-                    </li>
-                    <li>
-                      <button type="button">
-                        <div class="option__icon delete">
-                          <img
-                            src="/icons/delete.svg"
-                            alt="delete icon (trash can)"
-                          />
-                        </div>
-                        Delete
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
             </div>
             <div class="object">
               <div class="obj__img">
@@ -1020,5 +994,6 @@
       </main>
     </div>
     <script type="module" src="/main.js"></script>
+    <script type="module" src="/js/index.js"></script>
   </body>
 </html>
