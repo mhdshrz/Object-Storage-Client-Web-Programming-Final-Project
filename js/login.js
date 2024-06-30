@@ -1,4 +1,5 @@
 const domain = localStorage.getItem("domain");
+let loginFlag = false;
 
 const eyeCon = document.querySelector(".password__icon");
 const loginForm = document.getElementsByTagName("form")[0];
@@ -108,8 +109,7 @@ loginForm.addEventListener("submit", (e) => {
     })
       .then((response) => {
         if (response.status === 200) {
-          window.history.replaceState(null, null, "http://localhost:5173/");
-          window.location.href = "http://localhost:5173/";
+          loginFlag = true;
         } else if (response.status === 404) {
           alert("username or email not found");
         } else if (response.status === 403) {
@@ -118,6 +118,11 @@ loginForm.addEventListener("submit", (e) => {
         return response.json();
       })
       .then((result) => {
+        if (loginFlag) {
+          window.history.replaceState(null, null, "http://localhost:5173/");
+          window.location.href = "http://localhost:5173/";
+          localStorage.setItem("username", result.username);
+        }
         console.log("result", result);
       })
       .catch((error) => console.error("error", error));
