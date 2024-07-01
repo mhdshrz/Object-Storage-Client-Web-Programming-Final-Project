@@ -150,7 +150,7 @@ function generateRandomEmail(username) {
   return `${username}@${domain}`;
 }
 
-function generateRandomPictureUrl() {
+export function generateRandomPictureUrl() {
   const urls = [
     "/users/alice-emma.png",
     "/users/anne-jennifer.png",

@@ -259,6 +259,10 @@ header .logo a {
   margin-right: 1rem;
 }
 
+.user__profile img:hover {
+  cursor: pointer;
+}
+
 .user__profile span {
   width: 100px;
 }
@@ -354,7 +358,7 @@ header .logo a {
 
 /* popover menu */
 .options__menu {
-  position: absolute;
+  position: fixed;
   background-color: white;
   z-index: 100;
   /* top: 285px;
@@ -380,12 +384,17 @@ header .logo a {
   flex-direction: column;
 }
 
-.options__menu button {
+.option__button {
   align-items: center;
   column-gap: 10px;
-  padding: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  margin-block: 0.3rem;
   width: 100%;
   border-radius: 20px;
+}
+
+.option__button:hover {
+  background-color: var(--bg-primary-color);
 }
 
 .option__icon {
@@ -542,6 +551,7 @@ form.addpeople.active {
 }
 
 .people3 {
+  height: 83px;
   padding: 1rem;
   box-shadow: 0 -5px 5px -5px #dddddd;
 }
@@ -564,7 +574,7 @@ form.addpeople button[type="button"] {
   height: 35px;
   border-radius: 50%;
   background-color: white;
-  box-shadow: 0 0 20px #dddddd;
+  box-shadow: 0px 0 15px #eaeaea;
   display: flex;
   justify-content: center;
   align-items: center;

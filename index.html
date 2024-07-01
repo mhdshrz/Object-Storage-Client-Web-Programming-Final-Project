@@ -50,8 +50,20 @@
           </li>
           <li>
             <div class="user__profile">
-              <img src="/users/dummy-avatar.png" alt="Your avatar picture" />
+              <img id="profile-pic" alt="upload picture" />
+              <!-- <img
+                id="profile-pic"
+                src="http://192.168.43.73:8001/amirf.jpg"
+                alt="Your avatar picture"
+              /> -->
               <span>Mitchel</span>
+              <input
+                type="file"
+                name="profile-pic-upload"
+                id="profile-pic-upload"
+                style="display: none"
+                accept="image/*"
+              />
             </div>
           </li>
         </ul>
@@ -59,7 +71,7 @@
       <main class="main__primary">
         <section class="objects__container">
           <h1>Objects</h1>
-          <h2>Total: <span>120 GB</span></h2>
+          <h2>Total: <span></span></h2>
           <div class="objects">
             <!-- <div class="object">
               <div class="obj__img">

@@ -1,24 +1,40 @@
-// import { objects } from "../public/resources/objects";
-// import { users } from "../public/resources/objects";
+import { generateRandomPictureUrl } from "../public/resources/objects";
 
 const domain = localStorage.getItem("domain");
+// const domain = "http://localhost:8000/";
+const domain2 = "http://192.168.43.73:8001/";
 
-let objects = [];
+let objectsArray = [];
+let totalPages = -1;
 let filteredObjects = [];
 let users = [];
+let filteredUsers = [];
+let totalVolumeUsed = "";
 
-fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
+fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
   .then((response) => {
     if (!response.ok)
       throw new Error("network response was not ok", response.status);
     return response.json();
   })
   .then((result) => {
-    objects = result;
-    filteredObjects = [...objects];
-    showObjects(0, 20, objects); // shows the first 20 objects at page startup
+    // console.log(result);
+    objectsArray = result.files;
+    totalPages = result.totalPages;
+    filteredObjects = [...objectsArray];
+    totalVolumeUsed = objectsArray.reduce((acc, obj) => {
+      if (obj.isOwner) return acc + obj.fileSize;
+      return acc;
+    }, 0);
+    showObjects(objectsArray); // shows the first 20 objects at page startup
+
     document.querySelector(".user__profile").children[1].textContent =
       localStorage.getItem("username");
+    document.querySelector(
+      ".objects__container"
+    ).children[1].children[0].textContent = `${
+      Math.round((totalVolumeUsed / 1024) * 100) / 100
+    } KB`;
 
     document.addEventListener("click", hidePopupMenu);
     document.addEventListener("contextmenu", hidePopupMenu);
@@ -43,15 +59,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
     const overlayGoBack = document
       .querySelector(".addpeople")
       .getElementsByTagName("button")[0];
-    overlayGoBack.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const overlay = document.querySelector(".overlay");
-      const form = document.querySelector(".addpeople");
-      form.classList.remove("active");
-      setTimeout(() => {
-        overlay.classList.remove("active");
-      }, 500);
-    });
+    overlayGoBack.addEventListener("click", hideForm);
 
     const uploadButton = document.getElementById("upload-button");
     uploadButton.addEventListener("click", () => {
@@ -71,57 +79,132 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
           method: "POST",
           body: formData,
         })
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok)
+              throw new Error("network response was not ok", response.status);
+            // location.reload();
+            alert(
+              "your file was uploaded successfully, you can reload the page to see the updated file list"
+            );
+            return response.json();
+          })
           .then((data) => console.log("success", data))
           .catch((error) => console.error("error", error));
       }
     });
 
-    const lastPageNumber = Math.ceil(objects.length / 20);
+    const profilePicElement = document.getElementById("profile-pic");
+    profilePicElement.setAttribute(
+      "src",
+      `${domain2}${localStorage.getItem("username")}.jpg`
+    );
+    console.log(`${domain2}${localStorage.getItem("username")}.jpg`);
+    profilePicElement.addEventListener("click", () => {
+      const profilePicUpload = document.getElementById("profile-pic-upload");
+      profilePicUpload.click();
+    });
+
+    const profilePicUpload = document.getElementById("profile-pic-upload");
+    profilePicUpload.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        // formData.append('username', username);
+
+        fetch(`${domain}upload_image/${localStorage.getItem("username")}/`, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok)
+              throw new Error("network response was not ok", response.status);
+            // location.reload();
+            alert(
+              "your file was uploaded successfully, you can reload the page to see the updated file list"
+            );
+            return response.json();
+          })
+          .then((data) => console.log("success", data))
+          .catch((error) => console.error("error", error));
+      }
+    });
+
     document.getElementById("previous").addEventListener("click", (e) => {
       e.stopPropagation();
       const pageNumber = document.getElementById("page-no");
       if (Number(pageNumber.textContent) > 1) {
-        pageNumber.textContent = `${Number(pageNumber.textContent) - 1}`;
-        showObjects(
-          Number(pageNumber.textContent) * 20 - 20,
-          Number(pageNumber.textContent) * 20,
-          filteredObjects
-        );
+        fetch(
+          `${domain}user_files/${localStorage.getItem("username")}/${
+            Number(pageNumber.textContent) - 1
+          }/`
+        )
+          .then((response) => {
+            if (!response.ok) throw new Error("network response was not ok");
+            return response.json();
+          })
+          .then((result) => {
+            objectsArray = result.files;
+            pageNumber.textContent = `${Number(pageNumber.textContent) - 1}`;
+            showObjects(objectsArray);
+          })
+          .catch((error) => console.error("error", error));
       }
     });
 
     document.getElementById("next").addEventListener("click", (e) => {
       e.stopPropagation();
       const pageNumber = document.getElementById("page-no");
-      if (Number(pageNumber.textContent) < lastPageNumber) {
-        pageNumber.textContent = `${Number(pageNumber.textContent) + 1}`;
-        showObjects(
-          Number(pageNumber.textContent) * 20 - 20,
-          Number(pageNumber.textContent) * 20,
-          filteredObjects
-        );
+      if (Number(pageNumber.textContent) < totalPages) {
+        fetch(
+          `${domain}user_files/${localStorage.getItem("username")}/${
+            Number(pageNumber.textContent) + 1
+          }/`
+        )
+          .then((response) => {
+            if (!response.ok) throw new Error("network response was not ok");
+            console.log("triggered");
+            return response.json();
+          })
+          .then((result) => {
+            objectsArray = result.files;
+            pageNumber.textContent = `${Number(pageNumber.textContent) + 1}`;
+            showObjects(objectsArray);
+            showObjects(objectsArray);
+          })
+          .catch((error) => console.error("error", error));
       }
     });
 
     // search objects
-    const searchObjects = document.getElementById("search");
-    searchObjects.addEventListener("input", (e) => {
-      filteredObjects = objects.filter((item) =>
+    const objectElementsSearch = document.getElementById("search");
+    objectElementsSearch.addEventListener("input", (e) => {
+      filteredObjects = objectsArray.filter((item) =>
         item.originalFileName
           .toLowerCase()
           .includes(e.target.value.toLowerCase())
       );
-      showObjects(0, 20, filteredObjects);
+      showObjects(filteredObjects);
+    });
+
+    const userElementsSearch = document.getElementById("search-people");
+    userElementsSearch.addEventListener("input", (e) => {
+      filteredUsers = users.filter((item) =>
+        item.name.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+      showUsers(filteredUsers);
     });
 
     function showPopupMenu(e, object) {
       // making the options menu popup
       function makePopupMenu() {
-        // options callback functions for share, download and delete
         // delete
         function deleteObject(e) {
-          console.log("delete", e.currentTarget);
+          // const currentTarget = e.currentTarget;
+          const objectElement =
+            e.currentTarget.parentNode.parentNode.parentNode.parentNode
+              .parentNode;
+          e.currentTarget.parentNode.parentNode.parentNode.parentNode.remove();
           fetch(
             `${domain}delete_file/${localStorage.getItem("username")}/${
               object.id
@@ -132,34 +215,77 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
                 "Content-Type": "application/json",
               },
             }
-          );
-          e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.remove();
+          ).then((response) => {
+            if (!response.ok)
+              throw new Error("network response was not ok", response.status);
+            // return response.json();
+            objectElement.remove();
+            // alert(
+            //   "object deleted successfully, you can reload the page to see the updated file list"
+            // );
+          });
         }
         // share
         function shareObject(e) {
           const objectElement =
             e.currentTarget.parentNode.parentNode.parentNode.parentNode
               .parentNode;
-          sendUsers = function () {
-            const temp = {
-              fileUpload: Number(objectElement.id),
-              userIds: Array.from(document.querySelectorAll(".person"))
-                .map((person) => {
-                  if (person.getElementsByTagName("input")[0].checked)
-                    return Number(person.id);
-                })
-                .filter((item) => item !== undefined),
-            };
-            console.log(temp);
-            // function updateCheckboxes() {
-            //   for (let id of temp.userIds) {
-            //     document.getElementById(`user${id}`).checked = true;
-            //   }
-            // }
-            // updateCheckboxes();
-          };
-
           e.currentTarget.parentNode.parentNode.parentNode.parentNode.remove();
+
+          fetch(`${domain}file-access/${objectElement.id}/`)
+            .then((response) => {
+              if (!response.ok)
+                throw new Error("response network was not ok", response.status);
+              return response.json();
+            })
+            .then((result) => {
+              users = result;
+              console.log(users);
+              // filteredUsers = [...users];
+              showUsers(users);
+              sendUsers = function () {
+                const temp = {
+                  fileUpload: Number(objectElement.id),
+                  userIds: Array.from(document.querySelectorAll(".person"))
+                    .map((person) => {
+                      if (person.getElementsByTagName("input")[0].checked)
+                        return Number(person.id);
+                    })
+                    .filter((item) => item !== undefined),
+                };
+                console.log(temp);
+                fetch(`${domain}update_access_accounts/`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    fileUpload: Number(objectElement.id),
+                    userIds: Array.from(document.querySelectorAll(".person"))
+                      .map((person) => {
+                        if (person.getElementsByTagName("input")[0].checked)
+                          return Number(person.id);
+                      })
+                      .filter((item) => item !== undefined),
+                  }),
+                }).then((response) => {
+                  if (!response.ok) {
+                    throw new Error(
+                      "network response was not ok",
+                      response.status
+                    );
+                    alert("network response was not ok");
+                  }
+                  return response.json();
+                });
+                // function updateCheckboxes() {
+                //   for (let id of temp.userIds) {
+                //     document.getElementById(`user${id}`).checked = true;
+                //   }
+                // }
+                // updateCheckboxes();
+              };
+            });
 
           const overlay = document.querySelector(".overlay");
           const form = document.querySelector(".addpeople");
@@ -168,11 +294,11 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
           setTimeout(() => {
             form.classList.add("active");
           }, 0);
-          showUsers();
         }
         // download
         function downloadObject(e) {
           console.log("download", e.currentTarget);
+          e.currentTarget.parentNode.parentNode.parentNode.parentNode.remove();
           // fetch(object.downloadLink)
           //   .then((response) => {
           //     if (!response.ok) throw new Error("network response was not ok");
@@ -226,11 +352,13 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
             button.addEventListener("click", deleteObject);
 
           // hidden a tag
-          const link = document.createElement("a");
-          link.setAttribute("href", object.downloadLink);
-          link.setAttribute("style", "display: none");
-          link.setAttribute("target", "_blank");
-          button.appendChild(link);
+          if (optionText === "Download") {
+            const link = document.createElement("a");
+            link.setAttribute("href", object.downloadLink);
+            link.setAttribute("style", "display: none");
+            link.setAttribute("target", "_blank");
+            button.appendChild(link);
+          }
 
           const optionIcon = document.createElement("div");
           optionIcon.classList.add("option__icon", optionText.toLowerCase());
@@ -260,19 +388,19 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
       if (document.querySelector(".options__menu"))
         document.querySelector(".options__menu").remove();
 
-      let coordinates, selectedObject;
+      let coordinates, selectedObjectElement;
       if (e.currentTarget.nodeName === "BUTTON") {
         const button = e.currentTarget;
-        selectedObject = button.parentNode;
+        selectedObjectElement = button.parentNode;
         coordinates = button.getBoundingClientRect();
       } else if (e.currentTarget.nodeName === "DIV") {
-        selectedObject = e.currentTarget;
-        coordinates = selectedObject
+        selectedObjectElement = e.currentTarget;
+        coordinates = selectedObjectElement
           .getElementsByTagName("button")[0]
           .getBoundingClientRect();
       }
       const optionsMenu = makePopupMenu();
-      if (Math.round(coordinates.bottom + 186) > window.innerHeight) {
+      if (Math.round(coordinates.bottom + 206) > window.innerHeight) {
         optionsMenu.style.left = `${Math.round(coordinates.left - 243)}px`;
         optionsMenu.style.bottom = `${Math.round(
           window.innerHeight - coordinates.bottom
@@ -281,7 +409,12 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
         optionsMenu.style.left = `${Math.round(coordinates.left - 243)}px`;
         optionsMenu.style.top = `${Math.round(coordinates.bottom)}px`;
       }
-      selectedObject.appendChild(optionsMenu);
+      console.log("selected", selectedObjectElement);
+      console.log("coordinates", coordinates);
+      console.log("bottom", optionsMenu.style.bottom);
+      console.log("top", optionsMenu.style.top);
+      console.log("left", optionsMenu.style.left);
+      selectedObjectElement.appendChild(optionsMenu);
     }
 
     function hidePopupMenu(e) {
@@ -295,9 +428,9 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
 
     // this function creates objects
     function makeObject(id, imgPath, imgAlt, name, description) {
-      const object = document.createElement("div");
-      object.classList.add("object");
-      object.setAttribute("id", id);
+      const objectElement = document.createElement("div");
+      objectElement.classList.add("object");
+      objectElement.setAttribute("id", id);
 
       const objImg = document.createElement("div");
       objImg.classList.add("obj__img");
@@ -307,7 +440,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
       img.setAttribute("alt", imgAlt);
       objImg.appendChild(img);
 
-      object.appendChild(objImg);
+      objectElement.appendChild(objImg);
 
       const objDesc = document.createElement("div");
       objDesc.classList.add("obj__desc");
@@ -315,13 +448,42 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
       const objName = document.createElement("h3");
       objName.textContent = name;
 
+      // 2024-06-30
+      // 16:48:20.032Z
       const objInfo = document.createElement("p");
-      objInfo.textContent = description;
+
+      function month(number) {
+        if (Number(number) === 1) return "Jan";
+        if (Number(number) === 2) return "Feb";
+        if (Number(number) === 3) return "Mar";
+        if (Number(number) === 4) return "Apr";
+        if (Number(number) === 5) return "May";
+        if (Number(number) === 6) return "Jun";
+        if (Number(number) === 7) return "Jul";
+        if (Number(number) === 8) return "Aug";
+        if (Number(number) === 9) return "Sep";
+        if (Number(number) === 10) return "Oct";
+        if (Number(number) === 11) return "Nov";
+        if (Number(number) === 12) return "Dec";
+        return "Oct";
+      }
+      let [size, date] = description.split(" - ");
+      size = (Math.round((Number(size) / 1024) * 100) / 100).toString() + "KB";
+      let [dateDay, dateHour] = date.split("T");
+      date =
+        dateHour.split(":")[0] +
+        ":" +
+        dateHour.split(":")[1] +
+        ", " +
+        dateDay.split("-")[2] +
+        " " +
+        month(dateDay.split("-")[1]);
+      objInfo.textContent = size + " - " + date;
 
       objDesc.appendChild(objName);
       objDesc.appendChild(objInfo);
 
-      object.appendChild(objDesc);
+      objectElement.appendChild(objDesc);
 
       const button = document.createElement("button");
       button.setAttribute("type", "button");
@@ -332,16 +494,16 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
 
       button.appendChild(buttonImg);
 
-      object.appendChild(button);
+      objectElement.appendChild(button);
 
-      return object;
+      return objectElement;
     }
 
-    function showObjects(start, end, array) {
+    function showObjects(array) {
       if (document.querySelectorAll(".object"))
         document.querySelectorAll(".object").forEach((obj) => obj.remove());
 
-      array.slice(start, end).forEach((object) => {
+      array.forEach((object) => {
         function getImgPathAlt(fileType) {
           switch (fileType) {
             case "png":
@@ -410,15 +572,13 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
       return person;
     }
 
-    function showUsers() {
+    function showUsers(array) {
       if (document.querySelectorAll(".person"))
-        document.querySelectorAll(".person").forEach((child) => child.remove());
-
-      // fetch(`${domain}someshit`)
+        document.querySelectorAll(".person").forEach((item) => item.remove());
 
       // sorting array based on access value and lastname
-      users.sort((a, b) => {
-        if (a.access === b.access) {
+      array.sort((a, b) => {
+        if (a.hasAccess === b.hasAccess) {
           const lastNameA = a.name.trim().split(" ")[
             a.name.trim().split(" ").length - 1
           ];
@@ -427,29 +587,30 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
           ];
           return lastNameA.localeCompare(lastNameB);
         }
-        return b.access - a.access;
+        return b.hasAccess - a.hasAccess;
       });
 
-      users.forEach((user) => {
-        const person = makeUser(
-          user.id,
-          user.picture,
-          user.name,
-          user.email,
-          user.access
-        );
-        person.addEventListener("click", (e) => {
-          e.stopPropagation();
+      array.forEach((user) => {
+        if (user.name !== localStorage.getItem("username")) {
+          const person = makeUser(
+            user.id,
+            `${domain2}${user.name}.jpg`,
+            user.name,
+            user.email,
+            user.hasAccess
+          );
+          person.addEventListener("click", (e) => {
+            e.stopPropagation();
+            let checkbox = person.getElementsByTagName("input")[0];
+            checkbox.checked = !checkbox.checked;
+          });
           let checkbox = person.getElementsByTagName("input")[0];
-          checkbox.checked = !checkbox.checked;
-        });
-        let checkbox = person.getElementsByTagName("input")[0];
-        checkbox.addEventListener("click", (e) => {
-          e.stopPropagation();
-        });
-        document.querySelector(".people").appendChild(person);
+          checkbox.addEventListener("click", (e) => {
+            e.stopPropagation();
+          });
+          document.querySelector(".people").appendChild(person);
+        }
       });
-
       updateThreePeople();
     }
 
@@ -476,28 +637,21 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/`)
         });
     }
 
+    function hideForm(e) {
+      e.stopPropagation();
+      const overlay = document.querySelector(".overlay");
+      const form = document.querySelector(".addpeople");
+      form.classList.remove("active");
+      setTimeout(() => {
+        overlay.classList.remove("active");
+      }, 500);
+    }
+
     let sendUsers;
     document.querySelector(".addpeople").addEventListener("submit", (e) => {
       e.preventDefault();
-      // fetch(`${domain}update_access_accounts/`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     fileUpload: object.id,
-      //     userIds: Array.from(document.querySelectorAll(".person")).map(
-      //       (person) => {
-      //         if (person.getElementsByTagName("input")[0].checked)
-      //           return person.id;
-      //       }
-      //     ),
-      //   }),
-      // })
-      //   .then((response) => console.log(response.json()))
-      //   .then((result) => console.log("success", result))
-      //   .catch((error) => console.log("error", error));
       sendUsers();
+      hideForm(e);
     });
 
     // console.log(objects);

@@ -142,6 +142,8 @@ signupForm.addEventListener("submit", (e) => {
       }),
     })
       .then((response) => {
+        if (!response.ok)
+          throw new Error("network response was not ok", response.status);
         if (response.status === 201) {
           document.querySelector(
             ".emailcheck"
