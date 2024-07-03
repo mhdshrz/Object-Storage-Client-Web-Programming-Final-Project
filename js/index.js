@@ -1,7 +1,7 @@
 import { generateRandomPictureUrl } from "../public/resources/objects";
 
-const domain = localStorage.getItem("domain");
-// const domain = "http://localhost:8000/";
+// const domain = localStorage.getItem("domain");
+const domain = "http://localhost:8000/";
 const domain2 = "http://192.168.43.73:8001/";
 
 let objectsArray = [];
@@ -179,58 +179,62 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
     // search objects
     const objectElementsSearch = document.getElementById("search");
     objectElementsSearch.addEventListener("input", (e) => {
-      filteredObjects = objectsArray.filter((item) =>
-        item.originalFileName
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase())
-      );
-      showObjects(filteredObjects);
+      // filteredObjects = objectsArray.filter((item) =>
+      //   item.originalFileName
+      //     .toLowerCase()
+      //     .includes(e.target.value.toLowerCase())
+      // );
+      // showObjects(filteredObjects);
+      let idsToDelete = objectsArray
+        .filter(
+          (item) =>
+            !item.originalFileName
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase())
+        )
+        .map((item) => item.id);
+
+      let idsToShow = objectsArray
+        .filter((item) =>
+          item.originalFileName
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase())
+        )
+        .map((item) => item.id);
+
+      console.log(e.target.value, idsToDelete, idsToShow);
+      if (idsToDelete.length > 0)
+        idsToDelete.forEach((id) => {
+          document.getElementById("o" + id.toString()).style.display = "none";
+        });
+      if (idsToShow.length > 0)
+        idsToShow.forEach((id) => {
+          document.getElementById("o" + id.toString()).style.display = "flex";
+        });
     });
 
     const userElementsSearch = document.getElementById("search-people");
     userElementsSearch.addEventListener("input", (e) => {
-      // filteredUsers = users.filter((item) =>
-      //   item.name.toLowerCase().includes(e.target.value.toLowerCase())
-      // );
-      // showUsers(filteredUsers);
       let idsToDelete = users
         .filter(
           (item) =>
             !item.name.toLowerCase().includes(e.target.value.toLowerCase())
         )
         .map((item) => item.id);
-      // idsToDelete.splice(
-      //   idsToDelete.indexOf(
-      //     idsToDelete.filter(
-      //       (item) => item.name === localStorage.getItem("username")
-      //     )[0]
-      //   ),
-      //   1
-      // );
 
       let idsToShow = users
         .filter((item) =>
           item.name.toLowerCase().includes(e.target.value.toLowerCase())
         )
         .map((item) => item.id);
-      // idsToShow.splice(
-      //   idsToShow.indexOf(
-      //     idsToShow.filter(
-      //       (item) => item.name === localStorage.getItem("username")
-      //     )[0]
-      //   ),
-      //   1
-      // );
 
       console.log(e.target.value, idsToDelete, idsToShow);
       if (idsToDelete.length > 0)
         idsToDelete.forEach((id) => {
-          // if (users[id].name !== localStorage.getItem("username"))
           document.getElementById(id.toString()).style.display = "none";
         });
       if (idsToShow.length > 0)
         idsToShow.forEach((id) => {
-          // if (users[id].name !== localStorage.getItem("username"))
           document.getElementById(id.toString()).style.display = "flex";
         });
     });
