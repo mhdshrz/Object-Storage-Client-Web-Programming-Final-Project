@@ -189,10 +189,50 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
 
     const userElementsSearch = document.getElementById("search-people");
     userElementsSearch.addEventListener("input", (e) => {
-      filteredUsers = users.filter((item) =>
-        item.name.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-      showUsers(filteredUsers);
+      // filteredUsers = users.filter((item) =>
+      //   item.name.toLowerCase().includes(e.target.value.toLowerCase())
+      // );
+      // showUsers(filteredUsers);
+      let idsToDelete = users
+        .filter(
+          (item) =>
+            !item.name.toLowerCase().includes(e.target.value.toLowerCase())
+        )
+        .map((item) => item.id);
+      // idsToDelete.splice(
+      //   idsToDelete.indexOf(
+      //     idsToDelete.filter(
+      //       (item) => item.name === localStorage.getItem("username")
+      //     )[0]
+      //   ),
+      //   1
+      // );
+
+      let idsToShow = users
+        .filter((item) =>
+          item.name.toLowerCase().includes(e.target.value.toLowerCase())
+        )
+        .map((item) => item.id);
+      // idsToShow.splice(
+      //   idsToShow.indexOf(
+      //     idsToShow.filter(
+      //       (item) => item.name === localStorage.getItem("username")
+      //     )[0]
+      //   ),
+      //   1
+      // );
+
+      console.log(e.target.value, idsToDelete, idsToShow);
+      if (idsToDelete.length > 0)
+        idsToDelete.forEach((id) => {
+          // if (users[id].name !== localStorage.getItem("username"))
+          document.getElementById(id.toString()).style.display = "none";
+        });
+      if (idsToShow.length > 0)
+        idsToShow.forEach((id) => {
+          // if (users[id].name !== localStorage.getItem("username"))
+          document.getElementById(id.toString()).style.display = "flex";
+        });
     });
 
     function showPopupMenu(e, object) {
@@ -215,15 +255,16 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
                 "Content-Type": "application/json",
               },
             }
-          ).then((response) => {
-            if (!response.ok)
-              throw new Error("network response was not ok", response.status);
-            // return response.json();
-            objectElement.remove();
-            // alert(
-            //   "object deleted successfully, you can reload the page to see the updated file list"
-            // );
-          });
+          )
+            .then((response) => {
+              if (!response.ok)
+                throw new Error("network response was not ok", response.status);
+              objectElement.remove();
+            })
+            .catch((error) => {
+              console.error("error", error);
+              alert("object deletion failed");
+            });
         }
         // share
         function shareObject(e) {
@@ -232,52 +273,63 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
               .parentNode;
           e.currentTarget.parentNode.parentNode.parentNode.parentNode.remove();
 
-          fetch(`${domain}file-access/${objectElement.id}/`)
+          fetch(`${domain}file-access/${objectElement.id.slice(1)}/`)
             .then((response) => {
               if (!response.ok)
                 throw new Error("response network was not ok", response.status);
               return response.json();
             })
             .then((result) => {
+              for (let i = result.length - 1; i >= 0; i--) {
+                if (result[i].name === `${localStorage.getItem("username")}`) {
+                  result.splice(i, 1);
+                }
+              }
               users = result;
               console.log(users);
-              // filteredUsers = [...users];
               showUsers(users);
+              let prevAccess = [];
+              users.forEach((item) =>
+                item.hasAccess ? prevAccess.push(item.id) : null
+              );
+              console.log("prev", prevAccess);
               sendUsers = function () {
-                const temp = {
-                  fileUpload: Number(objectElement.id),
-                  userIds: Array.from(document.querySelectorAll(".person"))
-                    .map((person) => {
-                      if (person.getElementsByTagName("input")[0].checked)
-                        return Number(person.id);
-                    })
-                    .filter((item) => item !== undefined),
-                };
-                console.log(temp);
+                let newAccess = [...prevAccess];
+                Array.from(document.querySelectorAll(".person")).forEach(
+                  (person) => {
+                    if (person.getElementsByTagName("input")[0].checked)
+                      if (!prevAccess.includes(Number(person.id)))
+                        newAccess.push(Number(person.id));
+                    if (!person.getElementsByTagName("input")[0].checked)
+                      if (prevAccess.includes(Number(person.id)))
+                        newAccess.splice(
+                          newAccess.indexOf(Number(person.id)),
+                          1
+                        );
+                  }
+                );
+                console.log("new", newAccess);
                 fetch(`${domain}update_access_accounts/`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    fileUpload: Number(objectElement.id),
-                    userIds: Array.from(document.querySelectorAll(".person"))
-                      .map((person) => {
-                        if (person.getElementsByTagName("input")[0].checked)
-                          return Number(person.id);
-                      })
-                      .filter((item) => item !== undefined),
+                    fileUpload: Number(objectElement.id.slice(1)),
+                    userIds: newAccess,
                   }),
-                }).then((response) => {
-                  if (!response.ok) {
-                    throw new Error(
-                      "network response was not ok",
-                      response.status
-                    );
-                    alert("network response was not ok");
-                  }
-                  return response.json();
-                });
+                })
+                  .then((response) => {
+                    if (!response.ok) {
+                      throw new Error(
+                        "network response was not ok",
+                        response.status
+                      );
+                    }
+                    // alert("network response was not ok");
+                    return response.json();
+                  })
+                  .catch((error) => console.error("error", error));
                 // function updateCheckboxes() {
                 //   for (let id of temp.userIds) {
                 //     document.getElementById(`user${id}`).checked = true;
@@ -430,7 +482,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
     function makeObject(id, imgPath, imgAlt, name, description) {
       const objectElement = document.createElement("div");
       objectElement.classList.add("object");
-      objectElement.setAttribute("id", id);
+      objectElement.setAttribute("id", `o${id}`);
 
       const objImg = document.createElement("div");
       objImg.classList.add("obj__img");
@@ -542,7 +594,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
     function makeUser(id, imgPath, name, email, access) {
       const person = document.createElement("div");
       person.classList.add("person");
-      person.id = id;
+      person.id = `${id}`;
 
       const checkbox = document.createElement("input");
       checkbox.setAttribute("type", "checkbox");
@@ -645,6 +697,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
       setTimeout(() => {
         overlay.classList.remove("active");
       }, 500);
+      document.querySelector(".people").innerHTML = "";
     }
 
     let sendUsers;
@@ -652,6 +705,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
       e.preventDefault();
       sendUsers();
       hideForm(e);
+      document.getElementById("search-people").value = "";
     });
 
     // console.log(objects);
