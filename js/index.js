@@ -144,6 +144,7 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
             return response.json();
           })
           .then((result) => {
+            document.getElementById("search").value = "";
             objectsArray = result.files;
             pageNumber.textContent = `${Number(pageNumber.textContent) - 1}`;
             showObjects(objectsArray);
@@ -167,9 +168,9 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
             return response.json();
           })
           .then((result) => {
+            document.getElementById("search").value = "";
             objectsArray = result.files;
             pageNumber.textContent = `${Number(pageNumber.textContent) + 1}`;
-            showObjects(objectsArray);
             showObjects(objectsArray);
           })
           .catch((error) => console.error("error", error));
@@ -237,6 +238,13 @@ fetch(`${domain}user_files/${localStorage.getItem("username")}/1/`)
         idsToShow.forEach((id) => {
           document.getElementById(id.toString()).style.display = "flex";
         });
+    });
+
+    window.addEventListener("beforeunload", (e) => {
+      console.log("Page is about to be reloaded or navigated away from.");
+
+      document.getElementById("search").value = "";
+      // e.preventDefault();
     });
 
     function showPopupMenu(e, object) {
