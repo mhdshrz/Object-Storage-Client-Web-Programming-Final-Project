@@ -47,10 +47,6 @@ This repository contains the frontend code for a file storage web application, d
 4. **Share Files**: Share your files with other users, allowing them to view and download the files you’ve shared.
 5. **Navigate Files**: Use the pagination controls to browse through your file collection efficiently.
 
-## Contributions
-
-Contributions are welcome! If you have ideas for enhancements or new features, feel free to fork this repository, make changes, and submit a pull request.
-
 ## Contact
 
-For any inquiries or support, please contact `your-email@example.com`.
+For any inquiries or support, please contact `mahdielmaximo@gmail.com`.
