@@ -21,8 +21,8 @@ This repository contains the frontend code for a file storage web application, d
 
 1. **Clone the repository**
     ```bash
-    git clone https://github.com/your-username/file-storage-frontend.git
-    cd file-storage-frontend
+    git clone https://github.com/mhdshrz/Object-Storage-Client-Web-Programming-Final-Project.git
+    cd Object-Storage-Client-Web-Programming-Final-Project
     ```
 
 2. **Install dependencies**
