@@ -4,11 +4,138 @@
     <meta charset="UTF-8" />
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Storage</title>
   </head>
   <body>
-    <h1>hello</h1>
+    <div class="container__primary">
+      <header>
+        <ul>
+          <li>
+            <div class="logo">
+              <a href="/">
+                <img src="/logo-blue.svg" alt="website logo picture" />
+                <span>Storage</span>
+              </a>
+            </div>
+          </li>
+          <li>
+            <div class="search__bar">
+              <input
+                class="field field__search"
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search ..."
+              />
+              <img src="/icons/search-dark.svg" alt="" />
+            </div>
+          </li>
+          <li>
+            <button type="button" id="upload-button" class="btn__primary">
+              <img
+                src="/icons/upload-light.png"
+                alt="Upload icon (a cloud in which is an upward arrow)"
+              />
+              Upload
+            </button>
+            <input
+              type="file"
+              name="file-upload"
+              id="file-upload"
+              style="display: none"
+              accept="*.*"
+            />
+          </li>
+          <li>
+            <div class="user__profile">
+              <img id="profile-pic" alt="upload picture" />
+              <!-- <img
+                id="profile-pic"
+                src="http://192.168.43.73:8001/amirf.jpg"
+                alt="Your avatar picture"
+              /> -->
+              <span>Mitchel</span>
+              <input
+                type="file"
+                name="profile-pic-upload"
+                id="profile-pic-upload"
+                style="display: none"
+                accept="image/*"
+              />
+            </div>
+          </li>
+        </ul>
+      </header>
+      <main class="main__primary">
+        <section class="objects__container">
+          <h1>Objects</h1>
+          <h2>Total: <span></span></h2>
+          <div class="objects">
+            <!-- <div class="object">
+              <div class="obj__img">
+                <img src="logos/figma-logo.png" alt="" />
+              </div>
+              <div class="obj__desc">
+                <h3>App School.fig</h3>
+                <p>10 GB - 10:09 PM, 10 Oct</p>
+              </div>
+              <button type="button">
+                <img src="/icons/options.svg" alt="three dot options icon" />
+              </button>
+            </div> -->
+          </div>
+          <div class="pagination">
+            <button class="btn__primary" type="button" id="previous">
+              &laquo;
+            </button>
+            <span id="page-no">1</span>
+            <button class="btn__primary" type="button" id="next">
+              &raquo;
+            </button>
+          </div>
+        </section>
+        <section class="overlay">
+          <form class="addpeople">
+            <h2>Add People</h2>
+            <div class="search__people">
+              <input
+                id="search-people"
+                class="field"
+                type="text"
+                name="search-people"
+                placeholder="Search ..."
+              />
+              <img src="/icons/search-dark.svg" alt="" />
+            </div>
+            <div class="people">
+              <!-- <div class="person" id="person-id">
+                <input type="checkbox" name="person-id" id="person-id" />
+                <img src="/users/alice-emma.png" alt="" />
+                <div class="person__info">
+                  <h3>Alice Emma</h3>
+                  <p>emmaart1234@gmail.com</p>
+                </div>
+              </div> -->
+            </div>
+            <div class="people3">
+              <!-- <img src="/users/alice-emma.png" alt="first checked user" />
+              <img src="/users/bush-matthew.png" alt="second checked user" />
+              <img src="/users/anne-jennifer.png" alt="third checked user" /> -->
+            </div>
+            <button type="button">
+              <img
+                src="/icons/goback-arrow.svg"
+                alt="go back icon (leftwards arrow)"
+              />
+            </button>
+            <button class="btn__primary" type="submit">Continue</button>
+          </form>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/main.js"></script>
+    <script type="module" src="/js/index.js"></script>
   </body>
 </html>
