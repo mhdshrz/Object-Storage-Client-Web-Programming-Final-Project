@@ -1,29 +1,28 @@
-# File Storage Web Application
+# File Storage Web Application Frontend
 
-This project is a web application that allows users to securely upload, manage, and share files using ArvanCloud's object storage. Users can register for an account, log in, and utilize the platform's features for file management. The application supports file uploads, downloads, deletions, and sharing capabilities. 
+This repository contains the frontend code for a file storage web application, developed using HTML, CSS, and vanilla JavaScript. The application provides a user-friendly interface for uploading, managing, and sharing files, with a responsive design and pagination for easy navigation.
 
 ## Features
 
-- **User Registration and Authentication**: Users can sign up for an account or log in to access their files.
-- **File Upload**: Users can upload files to ArvanCloud's object storage through the application.
-- **File Management**: Users can view their uploaded files with pagination, and they can delete files they have uploaded.
-- **File Sharing**: Users can share access to their files with other users. The shared users can view and download the files but cannot modify or delete them.
-- **Pagination**: Files are displayed with pagination controls, allowing users to navigate through pages using arrows and page numbers.
+- **User Registration and Login**: Users can create an account and log in to access their files.
+- **File Upload**: Users can upload files to the cloud directly from the web interface.
+- **File Management**: View, delete, and manage uploaded files with a simple and intuitive interface.
+- **File Sharing**: Share files with other users, granting them access to view and download the shared files.
+- **Pagination**: Easily navigate through files using arrows and page numbers.
 
 ## Technology Stack
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (for user management and file metadata)
-- **Object Storage**: ArvanCloud Object Storage
-- **Authentication**: JWT (JSON Web Token) for secure user sessions
+- **HTML**: Structuring the web pages.
+- **CSS**: Styling and layout of the user interface.
+- **JavaScript**: Adding interactivity and handling DOM manipulations.
+- **Vite**: A build tool that provides fast development and optimized production builds.
 
 ## Setup and Installation
 
 1. **Clone the repository**
     ```bash
-    git clone https://github.com/your-username/file-storage-webapp.git
-    cd file-storage-webapp
+    git clone https://github.com/your-username/file-storage-frontend.git
+    cd file-storage-frontend
     ```
 
 2. **Install dependencies**
@@ -31,41 +30,26 @@ This project is a web application that allows users to securely upload, manage, 
     npm install
     ```
 
-3. **Configure environment variables**
-
-    Create a `.env` file in the root directory with the following variables:
-
-    ```
-    PORT=3000
-    MONGODB_URI=your_mongodb_uri
-    ARVANCLOUD_ACCESS_KEY=your_arvancloud_access_key
-    ARVANCLOUD_SECRET_KEY=your_arvancloud_secret_key
-    JWT_SECRET=your_jwt_secret
-    ```
-
-4. **Start the application**
+3. **Run the development server**
     ```bash
-    npm start
+    npm run dev
     ```
 
-5. **Access the application**
+4. **Open the application**
 
-    Open your browser and go to `http://localhost:3000`.
+    Once the development server is running, open your browser and navigate to the provided local server URL (usually `http://localhost:3000` or similar).
 
 ## Usage
 
-1. **Register an Account**: Sign up for an account to start using the service.
-2. **Upload Files**: After logging in, use the upload interface to add files to your account.
-3. **Manage Files**: View your files in the dashboard, delete files you no longer need, and share files with other users.
-4. **File Sharing**: Share access to your files with other registered users by providing their email address.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+1. **Register or Log In**: Access the application by registering for an account or logging in with your credentials.
+2. **Upload Files**: Use the interface to upload files to your account.
+3. **Manage Files**: View and delete your uploaded files, and organize your file storage.
+4. **Share Files**: Share your files with other users, allowing them to view and download the files you’ve shared.
+5. **Navigate Files**: Use the pagination controls to browse through your file collection efficiently.
 
 ## Contributions
 
-Contributions are welcome! Please submit a pull request or open an issue for any changes or enhancements you would like to see.
+Contributions are welcome! If you have ideas for enhancements or new features, feel free to fork this repository, make changes, and submit a pull request.
 
 ## Contact
 
